@@ -1,6 +1,6 @@
 # Cellular-Automata-on-Fire-Forest-Simulation
 
-This cellular automata aim at creating a two-dimensional fire forest simulation using C.
+This cellular automata aim at creating a two-dimensional fire forest simulation using C. This project is initially an assignment in TU Dublin. It was initiated by professor Kevin Farell.
 
 ## Cellular automata planing
 
@@ -13,10 +13,12 @@ We can use a simple set of states, as shown in the paper :
 •	BURNT
 
 **Transitions rules**
+
 The rules are initially simple. Only the fuel cell can turn into burning. These burning cells become burnt after a certain time.
 We have : FUEL → BURNING → BURNT
 
 **Probabilities formulas**
+
 For the beginning, we will be using the formula described in the paper:
 
 P(burning) = (number of burning neighbours) / 8

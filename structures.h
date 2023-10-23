@@ -9,10 +9,11 @@ typedef enum State {
 } State;
 typedef enum Flammability{LOW,MEDIUM,HIGH} Flammability;
 
-typedef struct Cell {
+typedef struct CELL {
     State state;
     Flammability flammability;
-} Cell;
+    int generationsBurning;
+} CELL;
 
 
 #endif //FIRE_PROJECT_STATES_H

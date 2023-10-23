@@ -4,12 +4,12 @@
 
 #ifndef FIRE_PROJECT_GENERATION_H
 #define FIRE_PROJECT_GENERATION_H
-#include "states.h"
+#include "structures.h"
 
 
-Cell **allocateMemory(int width, int height);
-void initMap(Cell **grid, int width, int height);
-Cell **readMap(char *filename);
+CELL **allocateMemory(int width, int height);
+void initMap(CELL **grid, int width, int height);
+CELL **readMap(char *filename);
 int getMapWidth(char *filename);
 int getMapHeight(char *filename);
 #endif //FIRE_PROJECT_GENERATION_H

@@ -1,0 +1,11 @@
+//
+// Created by arnaud on 30/10/23.
+//
+
+#ifndef CELLULAR_AUTOMATA_ON_FIRE_FOREST_SIMULATION_READMAP_H
+#define CELLULAR_AUTOMATA_ON_FIRE_FOREST_SIMULATION_READMAP_H
+#include "structures.h"
+
+CELL** readMap(char *filename);
+
+#endif //CELLULAR_AUTOMATA_ON_FIRE_FOREST_SIMULATION_READMAP_H

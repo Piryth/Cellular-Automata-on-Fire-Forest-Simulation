@@ -4,6 +4,8 @@
 #include "structures.h"
 #include "simulation.h"
 #include "readmap.h"
+#include <math.h>
+#include <stdlib.h>
 #include "constants.h"
 
 int main(int argc, char **argv) {
@@ -57,24 +59,22 @@ int main(int argc, char **argv) {
         ////////////////////////////////////////////
         //// STEP 2 : EVALUATE NEW STATES       ////
         ////////////////////////////////////////////
+        //Copying the future grid to the current (saves the change of the fire start)
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapHeight; j++) {
-                //Changing the state of the future grid
                 evaluateCELL(i,j,mapWidth,mapHeight, gridFuture);
             }
         }
 
+        //Displaying
+        for (int i = 0; i < mapWidth; i++) {
+            for (int j = 0; j < mapHeight; j++) {
+                printf(" %d ", gridFuture[i][j].state);
+            }
+            printf("\n");
 
-        n++;
-    }
-
-
-    //Displaying
-    for (int i = 0; i < mapWidth; i++) {
-        for (int j = 0; j < mapHeight; j++) {
-            printf(" %d ", gridFuture[i][j].state);
         }
-        printf("\n");
+        n++;
     }
 
 

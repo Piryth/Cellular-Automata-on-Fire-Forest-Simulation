@@ -5,36 +5,44 @@
 #include "constants.h"
 #include <time.h>
 #include <stdlib.h>
-
+#include <stdio.h>
 
 /**
  * Evaluates cell by cell by analyzing the neighbours
 */
+int modulo(int a, int b) {
+    return ((a%b)+b)%b;
+}
 void evaluateCELL(int x, int y, int width, int height, CELL **grid) {
-  CELL cell = grid[x][y];
-  srand(time(NULL));
-
-  if(cell.state == FUEL) {
-    CELL neighbour;
+    //srand(time(NULL));
     int nbNeighbours = 0;
+    if(grid[modulo(x-1, width)][modulo(y-1,height)].state == BURNING) {nbNeighbours++;
 
-    for(int i = x-1; i <= x+1; i++) {
-      for(int j = y - 1; j <= y +1; j++) {
-        if(grid[i%mapWidth][j%mapHeight].state == BURNING) nbNeighbours++;
-      }
     }
-    int randomInt = rand()%101;
-    if(nbNeighbours*10 >= randomInt) {
-        cell.state = BURNING;
+    if(grid[modulo(x, width)][modulo(y-1,height)].state == BURNING) nbNeighbours++;
+    if(grid[modulo(x+1, width)][modulo(y-1,height)].state == BURNING) nbNeighbours++;
+    if(grid[modulo(x-1, width)][modulo(y,height)].state == BURNING) nbNeighbours++;
+    if(grid[modulo(x+1, width)][modulo(y,height)].state == BURNING) nbNeighbours++;
+    if(grid[modulo(x-1, width)][modulo(y+1,height)].state == BURNING) nbNeighbours++;
+    if(grid[modulo(x, width)][modulo(y+1,height)].state == BURNING) nbNeighbours++;
+    if(grid[modulo(x+1, width)][modulo(y+1,height)].state == BURNING) nbNeighbours++;
+
+
+
+    float probability = nbNeighbours/8.0;
+    int random = rand()% (100);
+
+    printf("Neighbours at %d,%d : %d\n",x,y, nbNeighbours);
+    //printf("Probality of burn at %d,%d : %d\n",x,y, (int)(probability*100.0));
+    //printf("Random seed at %d,%d : %d\n",x,y, random);
+    if(random < (int)(probability*100)) {
+        grid[x][y].state = BURNING;
+        printf("Cell[%d][%d] is burning !\n", x,y);
     }
 
 
-  } else if (cell.state == BURNING) {
-    if(cell.generationsBurning >= 3) {
-      cell.state = BURNT;
-    }
-    cell.generationsBurning++;
 
-  }
+
+
 }
 

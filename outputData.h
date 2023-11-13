@@ -1,0 +1,9 @@
+//
+// Created by arnaud on 06/11/23.
+//
+
+#ifndef CELLULAR_AUTOMATA_ON_FIRE_FOREST_SIMULATION_OUTPUDDATA_H
+#define CELLULAR_AUTOMATA_ON_FIRE_FOREST_SIMULATION_OUTPUDDATA_H
+#include "structures.h"
+void outputData(char* filename, CELL** grid);
+#endif //CELLULAR_AUTOMATA_ON_FIRE_FOREST_SIMULATION_OUTPUDDATA_H

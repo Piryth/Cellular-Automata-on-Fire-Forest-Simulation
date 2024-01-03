@@ -1,50 +1,51 @@
+//Author : Arnaud Endignous
 #include <stdio.h>
-#include <malloc.h>
-#include <memory.h>
 #include "structures.h"
-#include "simulation.h"
-#include "readmap.h"
-#include <math.h>
 #include <stdlib.h>
+#include "functions.h"
 #include "constants.h"
-#include "outputData.h"
+#include <time.h>
 
-int main(int argc, char **argv) {
+//Grids
+CELL **gridCurr;
+CELL **gridFuture;
+
+int main(void) {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////                                     INITIALISATION                                             ////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //Specifying the acces to the map
-    char *fileName = "map";
-    char *outputName = "out/simulation.dat";
-
-    //Clearing the previous simulation file
-    FILE *fp = fopen(outputName, "w");
-    fclose(fp);
 
     //Reading the map file and assigning the size. WARNING : the size must be correct and the map must be square
-    CELL **gridCurr = readMap(fileName);
+    gridCurr = initializeMap();
 
-    CELL **gridFuture = (CELL **) malloc(mapWidth * sizeof(CELL *));
-    for (int i = 0; i < mapWidth; i++)
-        gridFuture[i] = (CELL *) malloc(mapHeight * sizeof(CELL));
+    gridFuture = (CELL **) malloc(MAP_WIDTH * sizeof(CELL *));
+    for (int i = 0; i < MAP_WIDTH; i++) {
+        gridFuture[i] = (CELL *) malloc(MAP_HEIGHT * sizeof(CELL));
+    }
 
     //Copying the data to the future grid
-    for (int i = 0; i < mapWidth; i++) {
-        for (int j = 0; j < mapHeight; j++) {
+    for (int i = 0; i < MAP_WIDTH; i++) {
+        for (int j = 0; j < MAP_HEIGHT; j++) {
             gridFuture[i][j] = gridCurr[i][j];
         }
     }
+
+    printf("Serial program execution\n");
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////                                     SIMULATION                                             ////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Start the fire at 1,1 (debug)
-    int x_start = 1;
-    int y_start = 1;
+    int x_start = 5;
+    int y_start = 5;
     //NOTE : at the beginning, we do not take into account whether the cell is fuel or not
     gridFuture[x_start][y_start].state = BURNING;
+
+
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC,&start);
 
     //////////////////////////////////////////
     /////   SIMULATION BEGIN            /////
@@ -53,56 +54,48 @@ int main(int argc, char **argv) {
     while(n < NUMBEROFGENERATIONS) {
 
         ////////////////////////////////////////////
-        //// STEP 1 : COPY FUTURE MAP TO CURRENT////
+        //// STEP 1 : EVALUATE NEW STATES       ////
         ////////////////////////////////////////////
-        //Copying the future grid to the current (saves the change of the fire start)
-        for (int i = 0; i < mapWidth; i++) {
-            for (int j = 0; j < mapHeight; j++) {
+
+        for (int i = 0; i < MAP_WIDTH; i++) {
+            for (int j = 0; j < MAP_HEIGHT; j++) {
+                evaluateCell(i,j, gridCurr,gridFuture);
+            }
+        }
+
+        ////////////////////////////////////////////
+        //// STEP 2 : COPY FUTURE MAP TO CURRENT////
+        ////////////////////////////////////////////
+        for (int i = 0; i < MAP_WIDTH; i++) {
+            for (int j = 0; j < MAP_HEIGHT; j++) {
                 gridCurr[i][j] = gridFuture[i][j];
             }
         }
 
         ////////////////////////////////////////////
-        //// STEP 2 : OUTPUT TO FILE           ////
+        //// STEP 3 : WRITING OUTPUT TO FILE    ///
         ////////////////////////////////////////////
-        outputData("simulation.dat",gridCurr);
-
-        ////////////////////////////////////////////
-        //// STEP 3 : EVALUATE NEW STATES       ////
-        ////////////////////////////////////////////
-        //Copying the future grid to the current (saves the change of the fire start)
-        for (int i = 0; i < mapWidth; i++) {
-            for (int j = 0; j < mapHeight; j++) {
-                evaluateCELL(i,j,mapWidth,mapHeight, gridFuture);
-            }
-        }
-
-
-
-
+        char* buffer = malloc(30*sizeof(char));
+        sprintf(buffer,"out/%d.dat",n);
+        outputData(buffer,gridFuture);
 
         n++;
     }
 
-    //Displaying
-    for (int i = 0; i < mapWidth; i++) {
-        for (int j = 0; j < mapHeight; j++) {
-            printf(" %d ", gridCurr[i][j].state);
-        }
-        printf("\n");
 
-    }
-
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    double elapsed = (end.tv_sec - start.tv_sec);
+    elapsed+= (end.tv_nsec - start.tv_nsec)/ 1000000000.0;
+    printf("Time elapsed according to clock_gettime : %lf sec\n",elapsed);
 
     //Freeing the grids
-    for (int i = 0; i < mapWidth; i++) {
+    for (int i = 0; i < MAP_HEIGHT; i++) {
         free(gridCurr[i]);
         free(gridFuture[i]);
     }
 
     free(gridCurr);
     free(gridFuture);
-
 
 
 }
